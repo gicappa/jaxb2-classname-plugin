@@ -15,17 +15,20 @@
  */
 package gk.xml.jaxb2;
 
+import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.api.ClassNameAllocator;
 import com.sun.tools.xjc.outline.Outline;
 import org.xml.sax.ErrorHandler;
 
+import java.io.IOException;
+
 /**
- *
  * @author Gian Carlo Pace
  */
-public class ClassNameAdapterPlugin extends Plugin {
+public class JAXBClassNamePlugin extends Plugin {
+
     @Override
     public String getOptionName() {
         return "Xclassname";
@@ -37,15 +40,27 @@ public class ClassNameAdapterPlugin extends Plugin {
     }
 
     @Override
-    public boolean run(Outline outline,
-                       @SuppressWarnings("unused") Options opt,
-                       @SuppressWarnings("unused") ErrorHandler errorHandler) {
-
+    public int parseArgument(Options opt, String[] args, int i) throws BadCommandLineException, IOException {
         opt.classNameAllocator = new ClassNameAllocator() {
             public String assignClassName(String packageName, String className) {
                 return className + "GK";
             }
         };
+
+        return super.parseArgument(opt,args,i);
+    }
+
+    @Override
+    public boolean run(Outline outline,
+                       Options opt,
+                       ErrorHandler errorHandler) {
+
+
+
+
+        System.out.println("ClassNameAdapterPlugin 2");
+        System.out.println("outline = " + outline);
+        System.out.println("opt = " + opt);
 
         return true;
     }
