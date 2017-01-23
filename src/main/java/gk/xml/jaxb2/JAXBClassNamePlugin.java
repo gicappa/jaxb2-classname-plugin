@@ -54,14 +54,6 @@ public class JAXBClassNamePlugin extends Plugin {
     public boolean run(Outline outline,
                        Options opt,
                        ErrorHandler errorHandler) {
-
-
-
-
-        System.out.println("ClassNameAdapterPlugin 2");
-        System.out.println("outline = " + outline);
-        System.out.println("opt = " + opt);
-
         return true;
     }
 

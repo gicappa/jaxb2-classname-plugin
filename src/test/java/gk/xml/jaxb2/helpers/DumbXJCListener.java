@@ -1,4 +1,4 @@
-package gk.xml.jaxb2;
+package gk.xml.jaxb2.helpers;
 
 import com.sun.tools.xjc.XJCListener;
 import org.xml.sax.SAXParseException;
