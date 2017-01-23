@@ -18,11 +18,11 @@ package gk.xml.jaxb2;
 import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
-import com.sun.tools.xjc.api.ClassNameAllocator;
 import com.sun.tools.xjc.outline.Outline;
 import org.xml.sax.ErrorHandler;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * @author Gian Carlo Pace
@@ -40,14 +40,16 @@ public class JAXBClassNamePlugin extends Plugin {
     }
 
     @Override
-    public int parseArgument(Options opt, String[] args, int i) throws BadCommandLineException, IOException {
-        opt.classNameAllocator = new ClassNameAllocator() {
-            public String assignClassName(String packageName, String className) {
-                return className + "GK";
-            }
-        };
+    public int parseArgument(Options opt, final String[] args, int i) throws BadCommandLineException, IOException {
+        String[] myArgs = Arrays.stream(args)
+                .filter(o -> !o.equals("-GK"))
+                .toArray(size -> new String[size]);
 
-        return super.parseArgument(opt,args,i);
+        opt.classNameAllocator = (packageName, className) -> className + "GK";
+
+        System.out.println("myArgs = " + Arrays.toString(myArgs));
+
+        return super.parseArgument(opt, myArgs, i);
     }
 
     @Override

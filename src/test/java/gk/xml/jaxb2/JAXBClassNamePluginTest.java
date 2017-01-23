@@ -20,7 +20,7 @@ public class JAXBClassNamePluginTest {
                 "-p", "pkg",
                 "-npa",
                 "-extension",
-                "-Xclassname",
+                "-Xclassname", "-GK",
                 getClass().getResource("/test.xsd").getFile());
     }
 
