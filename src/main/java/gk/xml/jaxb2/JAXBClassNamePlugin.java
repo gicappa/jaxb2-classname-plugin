@@ -19,6 +19,8 @@ import com.sun.tools.xjc.BadCommandLineException;
 import com.sun.tools.xjc.Options;
 import com.sun.tools.xjc.Plugin;
 import com.sun.tools.xjc.outline.Outline;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xml.sax.ErrorHandler;
 
 import java.io.IOException;
@@ -29,6 +31,9 @@ import java.util.Arrays;
  */
 public class JAXBClassNamePlugin extends Plugin {
 
+    private Logger logger = LoggerFactory.getLogger(JAXBClassNamePlugin.class);
+    public static final String PLG_OPTION = "-cn:";
+
     @Override
     public String getOptionName() {
         return "Xclassname";
@@ -36,20 +41,30 @@ public class JAXBClassNamePlugin extends Plugin {
 
     @Override
     public String getUsage() {
-        return "  -Xclassname        :  uses a certain strategy to change the class name";
+        return "  -Xclassname -cn:/<regexp>/<subs>/       :  uses a certain strategy to change the class name";
     }
 
     @Override
-    public int parseArgument(Options opt, final String[] args, int i) throws BadCommandLineException, IOException {
-        String[] myArgs = Arrays.stream(args)
-                .filter(o -> !o.equals("-GK"))
-                .toArray(size -> new String[size]);
+    public int parseArgument(Options opt, final String[] args, int i)
+            throws BadCommandLineException, IOException {
 
-        opt.classNameAllocator = (packageName, className) -> className + "GK";
+        logger.debug("parsing arguments passed by user: {}", Arrays.toString(args));
 
-        System.out.println("myArgs = " + Arrays.toString(myArgs));
+        Arrays.stream(args)
+                .filter(o -> o.startsWith(PLG_OPTION))
+                .findAny()
+                .ifPresent(e -> opt.classNameAllocator = new RegexpClassNameAllocator(e));
 
-        return super.parseArgument(opt, myArgs, i);
+        super.parseArgument(opt, stripPlgOptions(args), i);
+
+        return 2;
+    }
+
+    private String[] stripPlgOptions(String[] args) {
+        return Arrays.stream(args)
+                    .filter(o -> !o.startsWith(PLG_OPTION))
+                    .filter(o -> !o.equals("-Xclassname"))
+                    .toArray(size -> new String[size]);
     }
 
     @Override
